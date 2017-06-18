@@ -1,0 +1,14 @@
+name = CMA Cablecast Staff Links
+description = "Adds links to Producer, Project, Show and Airing nodes and entities back to 
+Cablecast Playback Server.  Staff must be able to authenticate to Cablecast server to use."
+core = 7.x
+
+package = Community Media Advanced
+version = 7.x-1.0
+project = "cm_cablecast_staff_links"
+project_status_url = https://github.com/cm-advanced/cm_cablecast_staff_links
+
+
+dependencies[] = cablecast_api
+
+files[] = cablecast_staff_links.module

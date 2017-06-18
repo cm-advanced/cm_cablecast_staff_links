@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * Implements hook_permission().
+ */
+function cm_cablecast_staff_links_permission() {
+  $permissions = array(
+    'view cablecast staff links' => array(
+      'title' => t('View Cablecast Staff Links'),
+      'description' => t('Allows users views links back to Cablecast playback server.'),
+      'restrict access' => TRUE,
+    ),
+  );
+
+  return $permissions;
+}
+
+/**
+ *  Implementation of hook_entity_view()
+ */
+function cm_cablecast_staff_links_entity_view($entity, $type, $view_mode, $langcode) {
+
+  if ('airing' != $type) {
+    return;
+  }
+  
+  if (user_access('view cablecast staff links')) {
+		if (isset($entity->field_cablecast_airing_id[LANGUAGE_NONE][0]['value'])) {
+			$cablecast_airing_id = $entity->field_cablecast_airing_id[LANGUAGE_NONE][0]['value'];
+		
+			$entity->content['links']['extra_link'] = array(
+			  '#weight' => 100, // place it at the bottom
+				'#markup' => l('Link to Airing in Cablecast', variable_get('cablecast_api_server_address', NULL) . '/Cablecast/Schedule.Runs.Advanced.aspx', array('query' => array('scheduleID' => $cablecast_airing_id))),
+			);    
+		}
+  }
+}
+
+/**
+ *  Implementation of hook_node_view()
+ */
+function cm_cablecast_staff_links_node_view($node, $view_mode) {
+
+  if ($node->type == 'cm_show' && user_access('view cablecast staff links')) {
+     if (isset($node->field_cablecast_show_id[LANGUAGE_NONE][0]['value'])) {
+     $cablecast_show_id = $node->field_cablecast_show_id[LANGUAGE_NONE][0]['value'];
+    
+     $node->content['links']['extra_link'] = array(
+       '#weight' => 100, // place it at the bottom
+       '#markup' => l('Link to Show in Cablecast', variable_get('cablecast_api_server_address', NULL) . '/Cablecast/App.aspx#/show/' . $cablecast_show_id),
+     );
+    }
+  }
+  
+  if ($node->type == 'cm_project' && user_access('view cablecast staff links')) {
+     if (isset($node->field_cablecast_project_id[LANGUAGE_NONE][0]['value'])) {
+     $cablecast_project_id = $node->field_cablecast_project_id[LANGUAGE_NONE][0]['value'];
+    
+     $node->content['links']['extra_link'] = array(
+       '#weight' => 100, // place it at the bottom
+       '#markup' => l('Link to Project in Cablecast', variable_get('cablecast_api_server_address', NULL) . '/Cablecast/Library.Projects.Edit.aspx' , array('query' => array('projectID' => $cablecast_project_id))),
+     );
+      
+    }
+  }
+}
